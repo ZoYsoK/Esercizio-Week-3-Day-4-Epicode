@@ -1,4 +1,4 @@
-# Importa i moduli necessari
+# Importa le librerie necessari
 import socket, platform, os
 
 # Indirizzo IP e porta del server
